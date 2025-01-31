@@ -18,6 +18,43 @@ func (farm Matrix) locateSides() {
 	}
 }
 
+func (farm Matrix) locateDistinctSides() {
+	// you have to locate all the available sides first so you can remove the ones that don't have corners
+	farm.locateSides()
+	// you have to locate all the regions so that you only compare plots in the same region
+	farm.setDistinctRegionName()
+	for rowIdx, rowValue := range farm {
+		for colIdx, plot := range rowValue {
+			plot.DistinctSides = copyMap(plot.Sides)
+			// you need to initialise a new map to keep track of the distinct sides
+			// if you change the
+			// checks the previous plots, left and up direction
+			for _, direction := range []Direction{leftDirection, upDirection} {
+				if plot.hasBoundary(direction) {
+					continue
+				}
+
+				prevRow := rowIdx + direction.rowPosition
+				prevCol := colIdx + direction.colPosition
+				prevPlot := farm[prevRow][prevCol]
+				if plot.Region != prevPlot.Region {
+					continue
+				}
+				// if a side in the current plot exists in the previous plot,
+				// it means that that side does not have a corner
+				for _, side := range []string{UP, RIGHT, DOWN, LEFT} {
+					if plot.Sides[side] && prevPlot.Sides[side] {
+						plot.DistinctSides[side] = false
+					}
+				}
+
+			}
+
+		}
+	}
+
+}
+
 func (farm Matrix) setDistinctRegionName() {
 	counter := 0
 	for _, rowValue := range farm {
@@ -60,4 +97,12 @@ func (farm Matrix) calculateArea() int {
 		sum += (shape.Perimeter * shape.Area)
 	}
 	return sum
+}
+
+func copyMap(original map[string]bool) map[string]bool {
+	newMap := make(map[string]bool)
+	for key, value := range original {
+		newMap[key] = value
+	}
+	return newMap
 }

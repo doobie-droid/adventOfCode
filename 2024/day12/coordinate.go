@@ -1,14 +1,15 @@
 package main
 
 type Coordinate struct {
-	Row       int
-	Col       int
-	RowBounds int
-	ColBounds int
-	Value     string
-	Matrix    Matrix
-	Region    string
-	Sides     map[string]bool
+	Row           int
+	Col           int
+	RowBounds     int
+	ColBounds     int
+	Value         string
+	Matrix        Matrix
+	Region        string
+	Sides         map[string]bool
+	DistinctSides map[string]bool
 }
 
 func (point *Coordinate) hasBoundary(direction Direction) bool {
