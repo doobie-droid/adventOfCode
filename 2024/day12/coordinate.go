@@ -7,8 +7,8 @@ type Coordinate struct {
 	ColBounds int
 	Value     string
 	Matrix    Matrix
-	Perimeter int
 	Region    string
+	Sides     map[string]bool
 }
 
 func (point *Coordinate) hasBoundary(direction Direction) bool {
@@ -39,4 +39,14 @@ func (point *Coordinate) NameAllValidNeighbors(regionName string) {
 			nextPoint.NameAllValidNeighbors(regionName)
 		}
 	}
+}
+
+func (point *Coordinate) CalculatePerimeter() int {
+	numberOfValidSides := 0
+	for _, sideExists := range point.Sides {
+		if sideExists {
+			numberOfValidSides++
+		}
+	}
+	return numberOfValidSides
 }

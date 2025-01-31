@@ -13,42 +13,15 @@ func getPriceOfFence(fileName string) int {
 	farm := getMatrix(fileContent)
 
 	// loop through every row and column in the matrix
-	// for each cell in the matrix, assign a perimeter
-	farm.setPerimeters()
+	// for each cell in the matrix, record the valid sides , up, right, down, left
+	farm.locateSides()
 
 	// loop through every row and column in the matrix
 	// assign a distinct name to same shapes that are together
 	farm.setDistinctRegionName()
 
-	// loop through every row and column
-	// update a map, that has matches a name to a shape [update the perimeter and area part]
-	regionToShapeMap := map[string]*Shape{}
-
-	for _, row := range farm {
-		for _, point := range row {
-			shape, exists := regionToShapeMap[point.Region]
-			if exists {
-				shape.Area++
-				shape.Perimeter += point.Perimeter
-
-			} else {
-				shape = &Shape{
-					Perimeter: point.Perimeter,
-					Area:      1,
-				}
-			}
-			regionToShapeMap[point.Region] = shape
-		}
-	}
-
-	//loop through map containing name of shapes
-	// add sum of perimeters and areas
-	sum := 0
-	for _, shape := range regionToShapeMap {
-		sum += (shape.Perimeter * shape.Area)
-	}
-	// return said sum
-	return sum
+	area := farm.calculateArea()
+	return area
 }
 
 func getMatrix(fileContent string) Matrix {
@@ -65,6 +38,7 @@ func getMatrix(fileContent string) Matrix {
 				ColBounds: len(line),
 				Value:     plant,
 				Matrix:    nil,
+				Sides:     map[string]bool{},
 			}
 			row = append(row, coordinate)
 		}
