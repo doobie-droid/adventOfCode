@@ -33,8 +33,24 @@ func findMinimumNumberOfTokens(fileName string) int {
 }
 
 func findMinimumNumberOfTokensPartTwo(fileName string) int {
-	_ = fileName
-	return 3
+	var tokenCount int
+	fileContent := readFile(fileName)
+	lines := strings.Split(fileContent, "\n\n")
+
+	for _, line := range lines {
+		inputMatrix, outputMatrix := newMatrix(line)
+		inv, _ := inputMatrix.getInverse()
+		// update to accommodate part 2
+		outputMatrix[0][0] = outputMatrix[0][0] + 10000000000000
+		outputMatrix[1][0] = outputMatrix[1][0] + 10000000000000
+		output := inv.multiply(outputMatrix)
+		tokenACount, tokenBCount := output[0][0], output[1][0]
+		if isInteger(tokenACount) && isInteger(tokenBCount) {
+			tokenCount += int(math.Round(tokenACount*3) + math.Round(tokenBCount*1))
+		}
+
+	}
+	return tokenCount
 }
 
 func main() {
